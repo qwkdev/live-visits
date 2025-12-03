@@ -119,7 +119,7 @@
 
 		function setCounter(counter, value) {
 			const digits = Array.from(counter.querySelectorAll('.digit'));
-			const newValue = (String(value).padStart(digits, '0')).slice(-digits.length);
+			const newValue = (String(value).padStart(digits.length, '0')).slice(-digits.length);
 
 			digits.forEach((e, i) => {
 				e.style.setProperty('--digit', parseInt(newValue[i]));
