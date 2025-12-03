@@ -53,8 +53,8 @@
 			overflow: hidden;
 		}
 		#digits .digit p {
-			transform: translateY(calc((-100% - var(--padding)) * var(--digit)));
 			transition: 1s;
+			transform: translateY(calc(((-100% - var(--padding)) * var(--digit)) + 0px)); /* magically fixes transitions */
 			border-radius: var(--br);
 			width: calc(7 * var(--u));
 			height: calc(10 * var(--u));
