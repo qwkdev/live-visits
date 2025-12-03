@@ -8,27 +8,20 @@
 	<style>
 		:root {
 			--u: 20px;
-
 			--c1: #19d;
 			--c2: #508;
-
 			--glass-bg: #f5f5ff18;
 			--glass-border: #ffffff33;
-
 			--glass-blur: calc(2 * var(--u));
 			--border: calc(.1 * var(--u));
 			--br: calc(.8 * var(--u));
 		}
-
 		body {
 			margin: 0;
 			background: linear-gradient(to bottom right, var(--c1), var(--c2));
-
 			width: 100vw;
 			height: 100vh;
-
 			overflow: hidden;
-
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
@@ -37,50 +30,44 @@
 		body::-webkit-scrollbar {
 			display: none;
 		}
-
 		#digits {
 			--padding: calc(1 * var(--u));
 			background: var(--glass-bg);
 			border: var(--border) solid var(--glass-border);
 			backdrop-filter: blur(var(--glass-blur));
 			box-sizing: border-box;
-
 			width: min-content;
 			border-radius: calc(var(--br) + var(--padding));
 			padding: var(--padding);
 			display: flex;
 			gap: calc(.5 * var(--u));
-		
-			.digit {
-				--digit: 0;
-				display: flex;
-				flex-direction: column;
-				height: calc(10 * var(--u));
-				gap: var(--padding);
-				overflow: hidden;
-			}
-			.digit p {
-				transform: translateY(calc((-100% - var(--padding)) * var(--digit)));
-				transition: 1s;
-				border-radius: var(--br);
-				width: calc(7 * var(--u));
-				height: calc(10 * var(--u));
-				line-height: calc(10 * var(--u));
-				
-				background: var(--glass-bg);
-				border: var(--border) solid var(--glass-border);
-				backdrop-filter: blur(var(--glass-blur));
-				box-sizing: border-box;
-
-				color: #fff;
-				text-align: center;
-				font-family: Arial;
-				font-size: calc(7 * var(--u));
-				margin: 0;
-				user-select: none;
-			}
 		}
-
+		#digits .digit {
+			--digit: 0;
+			display: flex;
+			flex-direction: column;
+			height: calc(10 * var(--u));
+			gap: var(--padding);
+			overflow: hidden;
+		}
+		#digits .digit p {
+			transform: translateY(calc((-100% - var(--padding)) * var(--digit)));
+			transition: 1s;
+			border-radius: var(--br);
+			width: calc(7 * var(--u));
+			height: calc(10 * var(--u));
+			line-height: calc(10 * var(--u));
+			background: var(--glass-bg);
+			border: var(--border) solid var(--glass-border);
+			backdrop-filter: blur(var(--glass-blur));
+			box-sizing: border-box;
+			color: #fff;
+			text-align: center;
+			font-family: Arial;
+			font-size: calc(7 * var(--u));
+			margin: 0;
+			user-select: none;
+		}
 		h1, h2 {
 			color: #fff;
 			text-align: center;
