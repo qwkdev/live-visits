@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Live Visits</title>
+
+	<style>
+		:root {
+			--u: 20px;
+
+			--c1: #19d;
+			--c2: #508;
+
+			--glass-bg: #f5f5ff18;
+			--glass-border: #ffffff33;
+
+			--glass-blur: calc(2 * var(--u));
+			--border: calc(.1 * var(--u));
+			--br: calc(.8 * var(--u));
+		}
+
+		body {
+			margin: 0;
+			background: linear-gradient(to bottom right, var(--c1), var(--c2));
+
+			width: 100vw;
+			height: 100vh;
+
+			overflow: hidden;
+
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+		body::-webkit-scrollbar {
+			display: none;
+		}
+
+		#digits {
+			--padding: calc(1 * var(--u));
+			background: var(--glass-bg);
+			border: var(--border) solid var(--glass-border);
+			backdrop-filter: blur(var(--glass-blur));
+			box-sizing: border-box;
+
+			width: min-content;
+			border-radius: calc(var(--br) + var(--padding));
+			padding: var(--padding);
+			display: flex;
+			gap: calc(.5 * var(--u));
+		
+			.digit {
+				--digit: 0;
+				display: flex;
+				flex-direction: column;
+				height: calc(10 * var(--u));
+				gap: var(--padding);
+				overflow: hidden;
+			}
+			.digit p {
+				transform: translateY(calc((-100% - var(--padding)) * var(--digit)));
+				transition: 1s;
+				border-radius: var(--br);
+				width: calc(7 * var(--u));
+				height: calc(10 * var(--u));
+				line-height: calc(10 * var(--u));
+				
+				background: var(--glass-bg);
+				border: var(--border) solid var(--glass-border);
+				backdrop-filter: blur(var(--glass-blur));
+				box-sizing: border-box;
+
+				color: #fff;
+				text-align: center;
+				font-family: Arial;
+				font-size: calc(7 * var(--u));
+				margin: 0;
+				user-select: none;
+			}
+		}
+
+		h1, h2 {
+			color: #fff;
+			text-align: center;
+			font-family: Arial;
+			font-weight: 500;
+			margin: calc(1 * var(--u)) 0;
+			font-size: calc(1.5 * var(--u));
+		}
+		h1 {
+			font-family: monospace;
+		}
+	</style>
+</head>
+<body>
+	<h1 id="path">/total/sqa</h1>
+	<div id="digits">
+		<div class="digit" style="--digit: 0;">
+			<p>0</p><p>1</p><p>2</p><p>3</p><p>4</p><p>5</p><p>6</p><p>7</p><p>8</p><p>9</p>
+		</div>
+		<div class="digit" style="--digit: 0;">
+			<p>0</p><p>1</p><p>2</p><p>3</p><p>4</p><p>5</p><p>6</p><p>7</p><p>8</p><p>9</p>
+		</div>
+		<div class="digit" style="--digit: 0;">
+			<p>0</p><p>1</p><p>2</p><p>3</p><p>4</p><p>5</p><p>6</p><p>7</p><p>8</p><p>9</p>
+		</div>
+		<div class="digit" style="--digit: 0;">
+			<p>0</p><p>1</p><p>2</p><p>3</p><p>4</p><p>5</p><p>6</p><p>7</p><p>8</p><p>9</p>
+		</div>
+		<div class="digit" style="--digit: 0;">
+			<p>0</p><p>1</p><p>2</p><p>3</p><p>4</p><p>5</p><p>6</p><p>7</p><p>8</p><p>9</p>
+		</div>
+		<div class="digit" style="--digit: 0;">
+			<p>0</p><p>1</p><p>2</p><p>3</p><p>4</p><p>5</p><p>6</p><p>7</p><p>8</p><p>9</p>
+		</div>
+	</div>
+	<h2>Visits (Live)</h2>
+
+	<script>
+		const SERVER = 'https://qwk.pythonanywhere.com';
+		let path = window.location.pathname.slice(1).toLowerCase();
+		let total = false;
+		if (path.startsWith('total/')) {
+			total = true;
+			path = path.slice(6);
+		}
+
+		document.getElementById('path').innerText = '/' + (total ? 'total/' : '') + path;
+		const URL = SERVER + '/' + (total ? 'totalv/' : '') + path + (total ? '' : '?count=false');
+
+		function setCounter(counter, value) {
+			const digits = Array.from(counter.querySelectorAll('.digit'));
+			const newValue = (String(value).padStart(digits, '0')).slice(-digits.length);
+
+			digits.forEach((e, i) => {
+				e.style.setProperty('--digit', parseInt(newValue[i]));
+			});
+		}
+
+		const visitDigits = document.getElementById('digits');
+		function updateVisitCounter() {
+			fetch(URL, { method: 'GET' })
+				.then(response => response.json())
+				.then(data => {
+					setCounter(visitDigits, data['visits']);
+				})
+				.catch(error => {
+					setCounter(visitDigits, 0);
+					console.error('Error fetching total visits:', error)
+				});
+		}
+
+		document.addEventListener('dblclick', () => {
+			if (!document.fullscreenElement) { 
+				document.documentElement.requestFullscreen();
+			} else {
+				document.exitFullscreen();
+			}
+		});
+
+		setInterval(() => updateVisitCounter(), 5000);
+		updateVisitCounter();
+	</script>
+</body>
+</html>
