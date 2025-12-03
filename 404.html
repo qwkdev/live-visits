@@ -7,7 +7,9 @@
 
 	<style>
 		:root {
-			--u: 20px;
+			--u: 1.8vw;
+			--u: round(1.8vw, 10px);
+
 			--c1: #19d;
 			--c2: #508;
 			--glass-bg: #f5f5ff18;
@@ -78,6 +80,13 @@
 		}
 		h1 {
 			font-family: monospace;
+		}
+
+		@media only screen and (min-aspect-ratio: 1.5/1) {
+			:root {
+				--u: 2.5vh;
+				--u: round(2.5vh, 10px);
+			}
 		}
 	</style>
 </head>
