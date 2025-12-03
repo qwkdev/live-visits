@@ -115,7 +115,7 @@
 		}
 
 		document.getElementById('path').innerText = '/' + (total ? 'total/' : '') + path;
-		const URL = SERVER + '/' + (total ? 'totalv/' : '') + path + (total ? '' : '?count=false');
+		const URL = SERVER + '/' + (total ? 'totalv/' : 'l/') + path + (total ? '' : '?count=false');
 
 		function setCounter(counter, value) {
 			const digits = Array.from(counter.querySelectorAll('.digit'));
