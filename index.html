@@ -1,1 +1,112 @@
-&nbsp;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Live Visits</title>
+	<style>
+		body {
+			margin: 0;
+
+			background: #000;
+		}
+		#main {
+			width: 100vw;
+			height: max-content;
+
+			overflow-x: hidden;
+			overflow-y: scroll;
+
+			background: linear-gradient(to right, #000 10%, #fff 50%, #000 90%);
+			box-sizing: border-box;
+
+			.item {
+				width: 100vw;
+				height: 20vh;
+				position: relative;
+				margin-bottom: 1px;
+				background: #000;
+
+				p {
+					color: #fff;
+					position: absolute;
+					top: 0;
+					font-family: Arial;
+					margin: 0;
+				}
+
+				.info {
+					left: 0;
+					width: 45vw;
+					height: 7.5vh;
+					line-height: 7.5vh;
+					font-size: 2.5vh;
+					text-align: left;
+					margin-left: 2.5vh;
+				}
+				.date {
+					right: 0;
+					width: 45vw;
+					height: 7.5vh;
+					line-height: 7.5vh;
+					font-size: 2.5vh;
+					text-align: right;
+					margin-right: 2.5vh;
+				}
+				.main {
+					left: 0;
+					width: 90vw;
+					height: 20vh;
+					line-height: 20vh;
+					font-size: 7vh;
+					text-align: center;
+					margin: 0 5vw;
+				}
+			}
+		}
+
+	</style>
+</head>
+<body>
+	<div id="main">
+	</div>
+
+	<script>
+		let latest = 0;
+		function create(main, date, info) {
+			let newItem = document.createElement('div');
+			newItem.classList.add('item');
+
+			newItem.innerHTML = `<p class="info">${info}</p><p class="main">${main}</p><p class="date">${date}</p>`;
+
+			let list = document.getElementById('main');
+			if (list.hasChildNodes()) {
+				list.insertBefore(newItem, list.firstChild);
+			} else {
+				list.appendChild(newItem);
+			}
+		}
+		function newItems(data) {
+			return data.filter(item => item[0] > latest);
+		}
+		function update(data) {
+			let items = newItems(data);
+			if (items.length === 0) return;
+			latest = items[items.length - 1][0];
+
+			items.forEach(ele => create(ele[1], ele[2], ele[4]));
+		}
+
+		fetch('https://qwk.pythonanywhere.com/live'); // Resets visits
+		setInterval(() => {
+			fetch('https://qwk.pythonanywhere.com/live/api')
+			.then(resp => {
+				if (!resp.ok) {
+					throw new Error(`HTTP error: ${response.status}`);
+				}
+				return resp.json();
+			})
+			.then(data => update(data['data']))
+			.catch(error => console.error('Error fetching data:', error));
+		}, 2000);
+	</script>
+</body>
+</html>
