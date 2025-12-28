@@ -115,7 +115,6 @@
 	<h2>Visits (Live)</h2>
 
 	<script>
-		const SERVER = 'https://qwk.pythonanywhere.com';
 		let path = window.location.pathname.slice(1).toLowerCase();
 		let total = false;
 		if (path.startsWith('total/')) {
@@ -124,7 +123,7 @@
 		}
 
 		document.getElementById('path').innerText = '/' + (total ? 'total/' : '') + path;
-		const URL = SERVER + '/' + (total ? 'totalv/' : 'l/') + path + (total ? '' : '?count=false');
+		const URL = 'https://qtrack.pythonanywhere.com/' + (total ? 'counters/total/' : 'visit/') + path + (total ? '' : '?count=false');
 
 		function setCounter(counter, value) {
 			const digits = Array.from(counter.querySelectorAll('.digit'));
