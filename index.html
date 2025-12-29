@@ -3,110 +3,250 @@
 <head>
 	<title>Live Visits</title>
 	<style>
+		:root {
+			--u: 1.2vw;
+
+			--bg: #161617;
+			--bg2: #222223;
+
+			--grid: round(calc(2 * var(--u)), 10px);
+		}
+
 		body {
 			margin: 0;
-
-			background: #000;
+			background: var(--bg);
+			background-image: linear-gradient(0deg, var(--bg2) 0, var(--bg2) 1px, transparent 1px, transparent 100%),
+						linear-gradient(90deg, var(--bg2) 0, var(--bg2) 1px, transparent 1px, transparent 100%);
+			background-size: var(--grid) var(--grid);
 		}
-		#main {
-			width: 100vw;
-			height: max-content;
 
-			overflow-x: hidden;
-			overflow-y: scroll;
-
-			background: linear-gradient(to right, #000 10%, #fff 50%, #000 90%);
+		#sessions {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
 			box-sizing: border-box;
 
-			.item {
-				width: 100vw;
-				height: 20vh;
-				position: relative;
-				margin-bottom: 1px;
-				background: #000;
+			display: flex;
+			flex-direction: column;
 
-				p {
-					color: #fff;
-					position: absolute;
-					top: 0;
-					font-family: Arial;
-					margin: 0;
-				}
+			padding: round(calc(3 * var(--u)), 10px);
+			gap: calc(1 * var(--u));
+		}
+		.session {
+			background: var(--bg);
+			border: 1px solid var(--bg2);
+			padding: calc(1 * var(--u));
+			
+			font-family: monospace;
+			color: #fff;
 
-				.info {
-					left: 0;
-					width: 45vw;
-					height: 7.5vh;
-					line-height: 7.5vh;
-					font-size: 2.5vh;
-					text-align: left;
-					margin-left: 2.5vh;
-				}
-				.date {
-					right: 0;
-					width: 45vw;
-					height: 7.5vh;
-					line-height: 7.5vh;
-					font-size: 2.5vh;
-					text-align: right;
-					margin-right: 2.5vh;
-				}
-				.main {
-					left: 0;
-					width: 90vw;
-					height: 20vh;
-					line-height: 20vh;
-					font-size: 7vh;
-					text-align: center;
-					margin: 0 5vw;
+			display: flex;
+			flex-direction: column;
+
+			h1, p {
+				margin: 0;
+			}
+			h1 {
+				font-size: calc(1.5 * var(--u));
+				font-weight: 700;
+			}
+			p {
+				font-size: calc(1.2 * var(--u));
+				font-weight: 500;
+			}
+			span {
+				font-size: calc(1.2 * var(--u));
+				color: var(--bg2);
+				font-weight: 500;
+			}
+
+			.id {
+				padding-bottom: calc(1 * var(--u));
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.request {
+				border-top: 1px solid var(--bg2);
+				padding: calc(1 * var(--u)) 0;
+
+				display: grid;
+				grid-auto-flow: column;
+				grid-auto-columns: max-content;
+				align-items: center;
+
+				width: 100%;
+				overflow: hidden;
+				gap: calc(.5 * var(--u));
+			}
+			.info {
+				margin-bottom: calc(1 * var(--u));
+
+				display: grid;
+				grid-auto-flow: column;
+				grid-auto-columns: max-content;
+				align-items: center;
+
+				width: 100%;
+				overflow: hidden;
+				gap: calc(.5 * var(--u));
+
+				&:last-of-type {
+					margin-bottom: 0;
 				}
 			}
 		}
-
 	</style>
 </head>
 <body>
-	<div id="main">
-	</div>
+	<div id="sessions"></div>
 
 	<script>
-		let latest = 0;
-		function create(main, date, info) {
-			let newItem = document.createElement('div');
-			newItem.classList.add('item');
+		let KEY;
+		if (localStorage.getItem('apikey')) {
+			KEY = localStorage.getItem('apikey');
+		} else {
+			KEY = prompt('Enter api key:');
+			localStorage.setItem('apikey', KEY);
+		}
 
-			newItem.innerHTML = `<p class="info">${info}</p><p class="main">${main}</p><p class="date">${date}</p>`;
+		function insertChild(parent, child, n) {
+			if (parent.children) parent.insertBefore(child, parent.children[n]);
+			else parent.appendChild(child);
+		}		
+		function requestHTML(data, big=false, sep='|') {
+			return data.map((i, n) => {
+				return big && n == big ? `<h1>${i}</h1>` : (i ? `<p>${i}</p>` : `<span>${i}</span>`);
+			}).join(`<span>${sep}</span>`);
+		}
 
-			let list = document.getElementById('main');
-			if (list.hasChildNodes()) {
-				list.insertBefore(newItem, list.firstChild);
+		let latestId = 0;
+		const sessions = document.getElementById('sessions');
+		function addVisit(v) {
+			let visit;
+			
+			let findSession = sessions.querySelector(`.session[data-value="${v.session}"]`);
+			if (findSession) {
+				visit = findSession.cloneNode(true);
+				findSession.remove();
 			} else {
-				list.appendChild(newItem);
+				visit = document.createElement('div');
+				visit.classList.add('session');
+
+				let idEle = document.createElement('div');
+				idEle.classList.add('id');
+				idEle.innerHTML = '<h1></h1><p></p>';
+				visit.appendChild(idEle);
 			}
-		}
-		function newItems(data) {
-			return data.filter(item => item[0] > latest);
-		}
-		function update(data) {
-			let items = newItems(data);
-			if (items.length === 0) return;
-			latest = items[items.length - 1][0];
 
-			items.forEach(ele => create(ele[1], ele[2], ele[4]));
+			visit.dataset.value = v.session;
+			visit.querySelector('.id h1').textContent = v.session;
+			visit.querySelector('.id p').textContent = (new Date(v.stamp)).toTimeString().split(' ')[0];
+
+			if (v.id > latestId) latestId = v.id;
+
+			let infoEle = document.createElement('div');
+			infoEle.classList.add('info');
+			let infoEleRoute = document.createElement('p');
+			infoEleRoute.innerText = `${v.referrer} -> ${v.url}`;
+			infoEle.appendChild(infoEleRoute);
+			insertChild(visit, infoEle, 1);
+
+			let requestEle = document.createElement('div');
+			requestEle.classList.add('request');
+			requestEle.dataset.value = v.id;
+			requestEle.innerHTML = requestHTML([
+				(new Date(v.stamp)).toTimeString().split(' ')[0],
+				v.tracker,
+				v.ip,
+				v.browser,
+				v.os,
+				v.brand,
+				v.model,
+			], 1);
+			insertChild(visit, requestEle, 1);
+
+			insertChild(sessions, visit, 0);
 		}
 
-		fetch('https://qwk.pythonanywhere.com/live'); // Resets visits
-		setInterval(() => {
-			fetch('https://qwk.pythonanywhere.com/live/api')
-			.then(resp => {
-				if (!resp.ok) {
-					throw new Error(`HTTP error: ${response.status}`);
-				}
-				return resp.json();
-			})
-			.then(data => update(data['data']))
-			.catch(error => console.error('Error fetching data:', error));
-		}, 2000);
+		// addVisit({
+		// 	'id': 5,
+		// 	'stamp': 'Sun, 28 Dec 2025 12:00:00 GMT',
+		// 	'tracker': 'sqa',
+
+		// 	'session': 'abcd1234',
+		// 	'ip': '123.123.123.123',
+		// 	'url': 'https://sqa.my/',
+		// 	'referrer': 'https://google.com/',
+
+		// 	'browser': 'Chrome',
+		// 	'os': 'Windows',
+		// 	'brand': null,
+		// 	'model': null,
+		// });
+		// addVisit({
+		// 	'id': 7,
+		// 	'stamp': 'Sun, 28 Dec 2025 12:01:00 GMT',
+		// 	'tracker': 'sqa',
+
+		// 	'session': 'qwer5678',
+		// 	'ip': '123.123.123.123',
+		// 	'url': 'https://sqa.my/',
+		// 	'referrer': 'https://google.com/',
+
+		// 	'browser': 'Chrome',
+		// 	'os': 'Windows',
+		// 	'brand': null,
+		// 	'model': null,
+		// });
+		// addVisit({
+		// 	'id': 8,
+		// 	'stamp': 'Sun, 28 Dec 2025 12:02:00 GMT',
+		// 	'tracker': 'sqa-n5',
+
+		// 	'session': 'abcd1234',
+		// 	'ip': '123.123.123.123',
+		// 	'url': 'https://nat5.sqa.my/',
+		// 	'referrer': 'https://sqa.my/',
+
+		// 	'browser': 'Chrome',
+		// 	'os': 'Windows',
+		// 	'brand': null,
+		// 	'model': null,
+		// });
+		// addVisit({
+		// 	'id': 10,
+		// 	'stamp': 'Sun, 28 Dec 2025 12:03:00 GMT',
+		// 	'tracker': 'sqa-n5-maths',
+
+		// 	'session': 'abcd1234',
+		// 	'ip': '123.123.123.123',
+		// 	'url': 'https://nat5.sqa.my/maths',
+		// 	'referrer': 'https://nat5.sqa.my/',
+
+		// 	'browser': 'Chrome',
+		// 	'os': 'Windows',
+		// 	'brand': null,
+		// 	'model': null,
+		// });
+
+		function update() {
+			fetch(`https://qtrack.pythonanywhere.com/live?key=${KEY}`)
+				.then(r => r.json())
+				.then(data => {
+					let oldLatestId = latestId;
+					let visits = data['data'];
+					visits.sort((a, b) => a.id - b.id);
+					visits.forEach(v => {
+						if (v.id > oldLatestId) addVisit(v);
+					});
+				})
+				.catch(error => console.error('Error fetching total visits:', error));
+		}
+
+		update();
+		setInterval(update, 5000);
 	</script>
 </body>
 </html>
