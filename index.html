@@ -232,7 +232,7 @@
 		// });
 
 		function update() {
-			fetch(`http://qtrack.pythonanywhere.com/events/50?key=${KEY}`)
+			fetch(`https://qtrack.pythonanywhere.com/events/50?key=${KEY}`)
 				.then(r => r.json())
 				.then(data => {
 					let oldLatestId = latestId;
