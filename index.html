@@ -121,6 +121,15 @@
 			}).join(`<span>${sep}</span>`);
 		}
 
+		function formatUrl(url) {
+			let newUrl = url;
+			if (newUrl.startsWith('https://')) newUrl = newUrl.slice(8);
+			if (newUrl.startsWith('http://')) newUrl = newUrl.slice(7);
+			if (newUrl.endsWith('/')) newUrl = newUrl.slice(0, -1);
+
+			return newUrl;
+		}
+
 		let latestId = 0;
 		const sessions = document.getElementById('sessions');
 		function addVisit(v) {
@@ -149,7 +158,7 @@
 			let infoEle = document.createElement('div');
 			infoEle.classList.add('info');
 			let infoEleRoute = document.createElement('p');
-			infoEleRoute.innerText = `${v.referrer} -> ${v.url}`;
+			infoEleRoute.innerText = `${formatUrl(v.referrer)} -> ${formatUrl(v.url)}`;
 			infoEle.appendChild(infoEleRoute);
 			insertChild(visit, infoEle, 1);
 
