@@ -123,7 +123,7 @@
 
 		function formatUrl(url) {
 			let newUrl = url;
-			if (!newUrl) return String(newUrl);
+			if (!newUrl) return newUrl;
 
 			if (newUrl.startsWith('https://')) newUrl = newUrl.slice(8);
 			if (newUrl.startsWith('http://')) newUrl = newUrl.slice(7);
@@ -164,8 +164,8 @@
 			let fromUrl = formatUrl(v.referrer);
 			let toUrl = formatUrl(v.url);
 
-			if (toUrl.startsWith(fromUrl)) toUrl = toUrl.slice(fromUrl.length);
-			if (fromUrl.startsWith(toUrl)) fromUrl = fromUrl.slice(toUrl.length);
+			if (toUrl && toUrl.startsWith(fromUrl)) toUrl = toUrl.slice(fromUrl.length);
+			if (fromUrl && fromUrl.startsWith(toUrl)) fromUrl = fromUrl.slice(toUrl.length);
 
 			infoEleRoute.innerText = `${fromUrl} -> ${toUrl}`;
 			infoEle.appendChild(infoEleRoute);
