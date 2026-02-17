@@ -160,7 +160,14 @@
 			let infoEle = document.createElement('div');
 			infoEle.classList.add('info');
 			let infoEleRoute = document.createElement('p');
-			infoEleRoute.innerText = `${formatUrl(v.referrer)} -> ${formatUrl(v.url)}`;
+
+			let fromUrl = formatUrl(v.referrer);
+			let toUrl = formatUrl(v.url);
+
+			if (toUrl.startsWith(fromUrl)) toUrl = toUrl.slice(fromUrl.length);
+			if (fromUrl.startsWith(toUrl)) fromUrl = fromUrl.slice(toUrl.length);
+
+			infoEleRoute.innerText = `${fromUrl} -> ${toUrl}`;
 			infoEle.appendChild(infoEleRoute);
 			insertChild(visit, infoEle, 1);
 
