@@ -123,7 +123,7 @@
 
 		function formatUrl(url) {
 			let newUrl = url;
-			if (!newUrl) return newUrl;
+			if (!newUrl) return String(newUrl);
 
 			if (newUrl.startsWith('https://')) newUrl = newUrl.slice(8);
 			if (newUrl.startsWith('http://')) newUrl = newUrl.slice(7);
