@@ -6,17 +6,18 @@
 		:root {
 			--u: 1.2vw;
 
-			--bg: #161617;
-			--bg2: #222223;
+			--bg: #161618;
+			--bg2: #2a2a2b;
 
-			--grid: round(calc(2 * var(--u)), 10px);
+			--px: 1px;
+			--grid: round(calc(2 * var(--u)), calc(10 * var(--px)));
 		}
 
 		body {
 			margin: 0;
 			background: var(--bg);
-			background-image: linear-gradient(0deg, var(--bg2) 0, var(--bg2) 1px, transparent 1px, transparent 100%),
-						linear-gradient(90deg, var(--bg2) 0, var(--bg2) 1px, transparent 1px, transparent 100%);
+			background-image: linear-gradient(0deg, var(--bg2) 0, var(--bg2) var(--px), transparent var(--px), transparent 100%),
+						linear-gradient(90deg, var(--bg2) 0, var(--bg2) var(--px), transparent var(--px), transparent 100%);
 			background-size: var(--grid) var(--grid);
 		}
 
@@ -30,12 +31,12 @@
 			display: flex;
 			flex-direction: column;
 
-			padding: round(calc(3 * var(--u)), 10px);
+			padding: round(calc(3 * var(--u)), calc(10 * var(--px)));
 			gap: calc(1 * var(--u));
 		}
 		.session {
 			background: var(--bg);
-			border: 1px solid var(--bg2);
+			border: var(--px) solid var(--bg2);
 			padding: calc(1 * var(--u));
 			
 			font-family: monospace;
@@ -68,7 +69,7 @@
 				align-items: center;
 			}
 			.request {
-				border-top: 1px solid var(--bg2);
+				border-top: var(--px) solid var(--bg2);
 				padding: calc(1 * var(--u)) 0;
 
 				display: grid;
@@ -97,19 +98,28 @@
 				}
 			}
 		}
+
+		@media (min-resolution: 2dppx) { :root { --px: .5px; } }
+		@media only screen and (min-aspect-ratio: 1/1) {
+			:root {
+				--u: 1vh;
+			}
+		}
 	</style>
 </head>
 <body>
 	<div id="sessions"></div>
 
 	<script>
-		let KEY;
-		if (localStorage.getItem('apikey')) {
-			KEY = localStorage.getItem('apikey');
-		} else {
-			KEY = prompt('Enter api key:');
-			localStorage.setItem('apikey', KEY);
-		}
+		// let KEY;
+		// if (localStorage.getItem('apikey')) {
+		// 	KEY = localStorage.getItem('apikey');
+		// } else {
+		// 	KEY = prompt('Enter api key:');
+		// 	localStorage.setItem('apikey', KEY);
+		// }
+
+		const KEY = ';;qwk32';
 
 		function insertChild(parent, child, n) {
 			if (parent.children) parent.insertBefore(child, parent.children[n]);

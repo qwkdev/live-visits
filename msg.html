@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Messages</title>
+	<style>
+		:root {
+			--u: 1.2vw;
+
+			--bg: #161618;
+			--bg1: #202022;
+			--bg2: #2a2a2b;
+			--bg3: #444445;
+			--bg4: #777779;
+
+			--px: 1px;
+			--grid: round(calc(2 * var(--u)), calc(10 * var(--px)));
+		}
+
+		*::-webkit-scrollbar {
+			display: none;
+		}
+
+		.btn {
+			--btn-h: var(--h);
+			--btn-s: var(--s);
+			--btn-l: var(--l);
+			--br: calc(.5 * var(--u));
+			--border: calc(.15 * var(--u));
+
+			box-sizing: border-box;
+			font-family: monospace;
+			color: #fff;
+
+			background: hsl(var(--btn-h), calc(83% * var(--btn-s)), calc(57% * var(--btn-l)));
+			border: var(--border) solid hsl(var(--btn-h), calc(70% * var(--btn-s)), calc(48% * var(--btn-l)));
+			border-radius: var(--br);
+			box-shadow:
+				0 calc(var(--border)/2) calc(var(--border)/2) var(--border) hsla(var(--btn-h), calc(72% * var(--btn-s)), calc(30% * var(--btn-l)), 0.2),
+				inset 0 calc(-1 * var(--border)) var(--border) 0 hsl(var(--btn-h), calc(70% * var(--btn-s)), calc(48% * var(--btn-l))),
+				inset 0 0 0 var(--border) hsl(var(--btn-h), calc(92% * var(--btn-s)), calc(62% * var(--btn-l)));
+
+			transition: .2s;
+		}
+		.btn:hover {
+			--btn-l: calc(var(--l) * 1.05);
+		}
+		.btn:focus {
+			outline: none;
+		}
+		.action1 {
+			--h: 135;
+			--s: .7;
+			--l: .6;
+		}
+		.action2 {
+			--h: 0;
+			--s: .8;
+			--l: .5;
+		}
+
+		body {
+			margin: 0;
+			background: var(--bg);
+			background-image: linear-gradient(0deg, var(--bg2) 0, var(--bg2) var(--px), transparent var(--px), transparent 100%),
+						linear-gradient(90deg, var(--bg2) 0, var(--bg2) var(--px), transparent var(--px), transparent 100%);
+			background-size: var(--grid) var(--grid);
+		}
+
+		#messages {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			box-sizing: border-box;
+
+			display: flex;
+			flex-direction: column;
+
+			padding: round(calc(3 * var(--u)), calc(10 * var(--px)));
+			gap: calc(1 * var(--u));
+		}
+		.msg {
+			background: var(--bg);
+			border: var(--px) solid var(--bg2);
+			padding: calc(1 * var(--u));
+			
+			font-family: monospace;
+			color: #fff;
+
+			display: flex;
+			flex-direction: column;
+
+			h1, p {
+				margin: 0;
+			}
+			h1 {
+				font-size: calc(2 * var(--u));
+				font-weight: 700;
+			}
+			p {
+				font-size: calc(1.5 * var(--u));
+				font-weight: 500;
+			}
+			span {
+				font-size: calc(1.5 * var(--u));
+				color: var(--bg2);
+				font-weight: 500;
+			}
+
+			.info {
+				border-bottom: var(--px) solid var(--bg2);
+				padding-bottom: calc(1 * var(--u));
+
+				display: flex;
+				align-items: center;
+
+				width: 100%;
+				overflow: hidden;
+				gap: calc(.5 * var(--u));
+
+				.div {
+					flex-grow: 1;
+				}
+				.btn {
+					font-size: calc(1.5 * var(--u));
+					padding: calc(.25 * var(--u)) calc(.5 * var(--u));
+				}
+			}
+			.content {
+				margin-top: calc(1 * var(--u));
+
+				display: flex;
+				align-items: center;
+
+				width: 100%;
+				overflow: hidden;
+			}
+		}
+
+		#new {
+			background: var(--bg);
+			border: var(--px) solid var(--bg2);
+			padding: calc(1 * var(--u));
+			
+			font-family: monospace;
+			color: #fff;
+
+			display: grid;
+			grid-template-columns: 1fr 2fr;
+			grid-template-rows: repeat(4, 1fr);
+
+			gap: calc(.5 * var(--u));
+
+			.btn {
+				font-size: calc(2 * var(--u));
+			}
+			textarea {
+				grid-column: 2;
+				grid-row: 1 / 5;
+			}
+		}
+
+		#extra {
+			background: var(--bg);
+			border: var(--px) solid var(--bg2);
+			padding: calc(1 * var(--u));
+			
+			font-family: monospace;
+			color: #fff;
+
+			width: max-content;
+
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: calc(.5 * var(--u));
+
+			.btn {
+				font-size: calc(2 * var(--u));
+				padding: calc(1.5 * var(--u)) calc(4 * var(--u));
+			}
+		}
+
+		input, textarea {
+			width: 100%;
+			box-sizing: border-box;
+			margin: 0;
+			padding: calc(1 * var(--u));
+			background: var(--bg1);
+			border: var(--px) solid var(--bg3);
+			font-family: monospace;
+			font-size: calc(2 * var(--u));
+			color: #fff;
+			transition: .3s;
+		}
+		textarea {
+			resize: none;
+			height: 100%;
+		}
+		input:focus, textarea:focus {
+			outline: none;
+			border-color: var(--bg4);
+		}
+		input::placeholder, textarea::placeholder {
+			color: var(--bg4);
+		}
+
+		@media (min-resolution: 2dppx) { :root { --px: .5px; } }
+		@media only screen and (min-aspect-ratio: 1/1) {
+			:root {
+				--u: 1vh;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div id="messages">
+		<div id="new">
+			<input id="ipInput" type="text" placeholder="IP">
+			<input id="routeInput" type="text" placeholder="Route">
+			<input id="expiryInput" type="text" inputmode="decimal" placeholder="Expiry" oninput="fixInput(this)">
+			<button class="btn action1" onclick="createNew()">Send</button>
+			<textarea id="textInput" placeholder="Message"></textarea>
+		</div>
+		<div id="extra">
+			<button class="btn action2" onclick="clearMessages()">Delete All</button>
+		</div>
+	</div>
+
+	<script>
+		const SERVER = 'https://qtrack.pythonanywhere.com';
+
+		let KEY;
+		if (localStorage.getItem('apikey')) {
+			KEY = localStorage.getItem('apikey');
+		} else {
+			KEY = prompt('Enter api key:');
+			localStorage.setItem('apikey', KEY);
+		}
+
+		function fixInput(ele) {
+			ele.value = ele.value.replace(/[^0-9]/g, '');
+			ele.style.cssText = '';
+		}
+	
+		function insertChild(parent, child, n) {
+			if (parent.children) parent.insertBefore(child, Array.from(parent.children).at(n));
+			else parent.appendChild(child);
+		}
+		function requestHTML(data, big=false, sep='|') {
+			return data.map((i, n) => {
+				return big && n == big ? `<h1>${i}</h1>` : (i ? `<p>${i}</p>` : `<span>${i}</span>`);
+			}).join(`<span>${sep}</span>`);
+		}
+
+		const messages = document.getElementById('messages');
+		function addMessage(ip, data) {
+			let msg;
+			
+			msg = document.createElement('div');
+			msg.classList.add('msg');
+			msg.dataset.value = ip;
+
+			let info = document.createElement('div');
+			info.classList.add('info');
+			info.innerHTML = [
+				`<h1>${ip}</h1>`,
+				...Array.from(data.slice(1)).map(i => i ? `<p>${i}</p>` : `<span>${i}</span>`),
+				'<div class="div"></div>',
+				'<button class="btn action2" onclick="deleteMessage(this)">Del</button>'
+			].join(`<span>|</span>`);
+			msg.appendChild(info);
+
+			let content = document.createElement('div');
+			content.classList.add('content');
+
+			let contentText = document.createElement('p');
+			contentText.innerText = data[0];
+			content.appendChild(contentText);
+
+			msg.appendChild(content);
+
+			insertChild(messages, msg, -1);
+		}
+		
+		function sendRequest(url, options=null) {
+			fetch(`${SERVER}/message/${url}?key=${KEY}`, options || {})
+				.then(r => r.json())
+				.then(data => {
+					if (data.success) window.location.reload();
+					else {
+						alert(`Error: ${data.error}`);
+						console.error(data.error);
+					}
+				})
+				.catch(e => {
+					alert(`Network Error: ${e}`);
+					console.error(e);
+				});
+		}
+
+		function createNew() {
+			const ip = document.getElementById('ipInput').value;
+			const route = document.getElementById('routeInput').value;
+			const expiry = parseInt(document.getElementById('expiryInput').value) || null;
+			const msg = document.getElementById('textInput').value;
+
+			sendRequest('send', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ ip, msg, route, expiry })
+			});
+		}
+
+		function clearMessages() {
+			const confirm = prompt('Type "del" to delete all:');
+			if (confirm !== 'del') return;
+			sendRequest('clear', {});
+		}
+		function deleteMessage(ele) {
+			const ip = ele.parentElement.parentElement.dataset.value;
+			sendRequest('delete', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ ip })
+			});
+		}
+
+		fetch(`${SERVER}/message/get?key=${KEY}`)
+			.then(r => r.json())
+			.then(data => {
+				Object.keys(data).reverse().forEach(key => {
+					addMessage(key, data[key]);
+				});
+			})
+			.catch(error => console.error('Error fetching messages:', error));
+	</script>
+</body>
+</html>
